@@ -14,9 +14,19 @@ class MyApp extends StatelessWidget {
       // debugShowMaterialGrid: true,
       initialRoute: 'loading',
       theme: ThemeData(
-        primaryColor: Colors.grey,
-        accentColor: Colors.cyan,
+          primaryColor: Colors.grey,
+          accentColor: Colors.cyan,
           scaffoldBackgroundColor: Colors.black,
+          buttonColor: Colors.grey,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+            shadowColor: Colors.grey,
+            primary: Colors.grey.shade800,
+            onPrimary: Colors.white,
+            elevation: 0,
+            shape: StadiumBorder(),
+            minimumSize: Size(100, 40)
+          )),
           textTheme: TextTheme(
             bodyText1: TextStyle(color: Colors.white),
             bodyText2: TextStyle(color: Colors.white),

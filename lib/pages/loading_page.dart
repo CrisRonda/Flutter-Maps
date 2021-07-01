@@ -3,6 +3,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:maps_app/helpers/helpers.dart';
+import 'package:maps_app/pages/access_gps_page.dart';
 import 'package:maps_app/pages/map_page.dart';
 import 'package:maps_app/pages/no_internet_page.dart';
 
@@ -45,7 +46,7 @@ class LoadingPage extends StatelessWidget {
   }
 
   Future checkStatus(BuildContext context) async {
-    await checkGPSPermision();
+    await checkGPSPermision(context);
     await checkInternetConnection(context);
     return Navigator.pushReplacement(
           context, navigationFadeIn(context, MapPage()));
@@ -60,10 +61,11 @@ class LoadingPage extends StatelessWidget {
     }
   }
 
-  Future checkGPSPermision() async {
+  Future checkGPSPermision(BuildContext context) async {
     // TODO check permission or is active
-    Future.delayed(Duration(seconds: 3));
-    return;
+    await Future.delayed(Duration(seconds: 4));
+    return Navigator.pushReplacement(
+          context, navigationFadeIn(context, AccessGPSPage()));
   }
 
 }
