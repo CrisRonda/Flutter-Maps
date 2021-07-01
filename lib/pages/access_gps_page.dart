@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -7,7 +8,30 @@ class AccessGPSPage extends StatefulWidget {
   _AccessGPSPageState createState() => _AccessGPSPageState();
 }
 
-class _AccessGPSPageState extends State<AccessGPSPage> {
+class _AccessGPSPageState extends State<AccessGPSPage>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance?.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      final isGranted = await Permission.location.isGranted;
+      if (!(isGranted)) {
+        Navigator.pushReplacementNamed(context, "loading");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,10 +70,16 @@ class _AccessGPSPageState extends State<AccessGPSPage> {
     );
   }
 
-  requestAccessGPS(PermissionStatus status) {
+  requestAccessGPS(PermissionStatus status) async {
+    print(status);
     switch (status) {
       case PermissionStatus.granted:
-        Navigator.pushReplacementNamed(context, "map");
+        final gpsIsActive = await Geolocator.isLocationServiceEnabled();
+        if (gpsIsActive) {
+          Navigator.pushReplacementNamed(context, "map");
+        } else {
+          openAppSettings();
+        }
         break;
       case PermissionStatus.limited:
       case PermissionStatus.restricted:
