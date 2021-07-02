@@ -31,7 +31,7 @@ class UserLocationBloc extends Bloc<UserLocationEvent, UserLocationState> {
     UserLocationEvent event,
   ) async* {
     if (event is OnChangeLocation) {
-      yield state.copyWith(location: event.location);
+      yield state.copyWith(location: event.location,existLocation: true);
     }
   }
 }

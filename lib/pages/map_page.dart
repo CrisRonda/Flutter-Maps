@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_app/bloc/user_location/user_location_bloc.dart';
 
 class MapPage extends StatefulWidget {
@@ -25,21 +26,27 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       body: BlocBuilder<UserLocationBloc, UserLocationState>(
         builder: (context, state) {
-          return Center(
-            child: createMap(state)
-          );
+          return createMap(state);
         },
       ),
     );
   }
 
   Widget createMap(UserLocationState state) {
-    if (state.existLocation) {
+    if (!state.existLocation) {
       return Center(
-        child: Text("loading"),
+        child: CircularProgressIndicator(),
       );
     }
-
-    return Text("data");
+    final cameraPosition = CameraPosition(
+        target: state.location ?? new LatLng(-0.2320513, -78.5015669),
+        zoom: 15);
+    return GoogleMap(
+      mapType: MapType.normal,
+      initialCameraPosition: cameraPosition,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      zoomControlsEnabled: false,
+    );
   }
 }
