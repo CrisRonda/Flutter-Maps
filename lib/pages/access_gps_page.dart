@@ -10,21 +10,23 @@ class AccessGPSPage extends StatefulWidget {
 
 class _AccessGPSPageState extends State<AccessGPSPage>
     with WidgetsBindingObserver {
+  bool popup = false;
+
   @override
   void initState() {
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     super.initState();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed && !popup) {
       final isGranted = await Permission.location.isGranted;
       if (!(isGranted)) {
         Navigator.pushReplacementNamed(context, "loading");
@@ -59,8 +61,10 @@ class _AccessGPSPageState extends State<AccessGPSPage>
             ),
             ElevatedButton(
               onPressed: () async {
+                popup = true;
                 final status = await Permission.location.request();
-                this.requestAccessGPS(status);
+                await this.requestAccessGPS(status);
+                popup = false;
               },
               child: Text("Request permission"),
             )
@@ -76,7 +80,7 @@ class _AccessGPSPageState extends State<AccessGPSPage>
       case PermissionStatus.granted:
         final gpsIsActive = await Geolocator.isLocationServiceEnabled();
         if (gpsIsActive) {
-          Navigator.pushReplacementNamed(context, "map");
+          await Navigator.pushReplacementNamed(context, "loading");
         } else {
           openAppSettings();
         }

@@ -16,21 +16,22 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
+  bool popup = false;
   @override
   void initState() {
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     super.initState();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed && !popup) {
       final gpsIsActive = await Geolocator.isLocationServiceEnabled();
       if (gpsIsActive) {
         Navigator.pushReplacementNamed(context, "map");
@@ -76,6 +77,7 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
   }
 
   Future checkStatus(BuildContext context) async {
+    popup = true;
     Widget pageToNav = MapPage();
     final locationPermissionGranted = await Permission.location.isGranted;
     final gpsIsActive = await Geolocator.isLocationServiceEnabled();
@@ -88,8 +90,9 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
       pageToNav = NoInternetPage();
     }
     await Future.delayed(Duration(seconds: 4));
-    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+    if (popup) {
       Navigator.pushReplacement(context, navigationFadeIn(context, pageToNav));
-    });
+    }
+    popup = false;
   }
 }
