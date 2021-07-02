@@ -25,10 +25,38 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    final mapBloc = BlocProvider.of<MapBloc>(context);
+    final userLocationBloc = BlocProvider.of<UserLocationBloc>(context);
     return Scaffold(
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [ButtonCenterLocation()],
+      floatingActionButton: BlocBuilder<MapBloc, MapState>(
+        builder: (context, state) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CustomFloattingActionButton(
+                icon: state.enableFollowUser
+                    ? Icons.directions_off_rounded
+                    : Icons.directions_run,
+                onPressed: () {
+                  mapBloc.add(OnEnableFollowUser());
+                },
+              ),
+              CustomFloattingActionButton(
+                icon: Icons.moving_rounded,
+                onPressed: () {
+                  mapBloc.add(OnEnablePolyline());
+                },
+              ),
+              CustomFloattingActionButton(
+                icon: Icons.my_location,
+                onPressed: () {
+                  mapBloc
+                      .returnInitialLocation(userLocationBloc.state.location!);
+                },
+              ),
+            ],
+          );
+        },
       ),
       body: BlocBuilder<UserLocationBloc, UserLocationState>(
         builder: (context, state) {
@@ -49,6 +77,8 @@ class _MapPageState extends State<MapPage> {
         zoom: 15);
 
     final mapBloc = BlocProvider.of<MapBloc>(context);
+    mapBloc.add(OnChangeLocationUser(state.location!));
+
     return GoogleMap(
       mapType: MapType.normal,
       initialCameraPosition: cameraPosition,
@@ -56,6 +86,8 @@ class _MapPageState extends State<MapPage> {
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       onMapCreated: mapBloc.initMap,
+      polylines: mapBloc.state.polylines.values.toSet(),
+      onCameraMove: (cameraPosition)=> mapBloc.add(OnMoveCamera(cameraPosition.target)),
     );
   }
 }

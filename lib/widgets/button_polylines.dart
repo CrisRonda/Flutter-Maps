@@ -1,21 +1,22 @@
 part of 'widtgets.dart';
 
-class ButtonCenterLocation extends StatelessWidget {
+class CustomFloattingActionButton extends StatelessWidget {
+  final IconData icon;
+  final Function onPressed;
+
+  const CustomFloattingActionButton({this.icon= Icons.my_location, required this.onPressed}) : super();
+
   @override
   Widget build(BuildContext context) {
-    final mapBloc = BlocProvider.of<MapBloc>(context);
-    final userLocationBloc = BlocProvider.of<UserLocationBloc>(context);
     return Container(
       margin: EdgeInsets.only(bottom: 16),
       child: CircleAvatar(
         backgroundColor: Colors.grey.shade700,
         maxRadius: 25,
         child: IconButton(
-          onPressed: () {
-            mapBloc.returnInitialLocation(userLocationBloc.state.location!);
-          },
+          onPressed: ()=> this.onPressed(),
           icon: Icon(
-            Icons.my_location,
+            this.icon,
             color: Colors.white,
           ),
         ),
