@@ -58,10 +58,16 @@ class _MapPageState extends State<MapPage> {
           );
         },
       ),
-      body: BlocBuilder<UserLocationBloc, UserLocationState>(
-        builder: (context, state) {
-          return createMap(state);
-        },
+      body: Stack(
+        children: [
+          BlocBuilder<UserLocationBloc, UserLocationState>(
+            builder: (context, state) {
+              return createMap(state);
+            },
+          ),
+          // Positioned(child: SearchBar(), top: 0,),
+          CustomMarker()
+        ],
       ),
     );
   }
@@ -87,7 +93,8 @@ class _MapPageState extends State<MapPage> {
       zoomControlsEnabled: false,
       onMapCreated: mapBloc.initMap,
       polylines: mapBloc.state.polylines.values.toSet(),
-      onCameraMove: (cameraPosition)=> mapBloc.add(OnMoveCamera(cameraPosition.target)),
+      onCameraMove: (cameraPosition) =>
+          mapBloc.add(OnMoveCamera(cameraPosition.target)),
     );
   }
 }

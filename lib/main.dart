@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.cyan,
         scaffoldBackgroundColor: Colors.black,
         buttonColor: Colors.grey,
+        iconTheme: IconThemeData(color: Colors.white),
         elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
                 shadowColor: Colors.grey,
