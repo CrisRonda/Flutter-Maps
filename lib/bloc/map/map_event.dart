@@ -19,5 +19,13 @@ class OnMoveCamera extends MapEvent {
   final LatLng positionCenterMap;
 
   OnMoveCamera(this.positionCenterMap);
-  
+}
+
+class OnDrawRoute extends MapEvent {
+  final List<LatLng> polyline;
+  final double distance;
+  final double duration;
+
+  OnDrawRoute(
+      {required this.polyline, required this.distance, required this.duration});
 }

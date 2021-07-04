@@ -90,7 +90,8 @@ class _MapPageState extends State<MapPage> {
               child: CustomFloattingActionButton(
                 icon: Icons.my_location,
                 onPressed: () {
-                  mapBloc.returnInitialLocation(userLocationBloc.state.location!);
+                  mapBloc
+                      .returnInitialLocation(userLocationBloc.state.location!);
                 },
               ),
             ),
@@ -112,17 +113,21 @@ class _MapPageState extends State<MapPage> {
 
     final mapBloc = BlocProvider.of<MapBloc>(context);
     mapBloc.add(OnChangeLocationUser(state.location!));
-
-    return GoogleMap(
-      mapType: MapType.normal,
-      initialCameraPosition: cameraPosition,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      zoomControlsEnabled: false,
-      onMapCreated: mapBloc.initMap,
-      polylines: mapBloc.state.polylines.values.toSet(),
-      onCameraMove: (cameraPosition) =>
-          mapBloc.add(OnMoveCamera(cameraPosition.target)),
+    return BlocBuilder<MapBloc, MapState>(
+      builder: (context, state) {
+        return GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: cameraPosition,
+          compassEnabled: false,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          onMapCreated: mapBloc.initMap,
+          polylines: state.polylines.values.toSet(),
+          onCameraMove: (cameraPosition) =>
+              mapBloc.add(OnMoveCamera(cameraPosition.target)),
+        );
+      },
     );
   }
 }
