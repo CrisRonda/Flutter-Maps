@@ -1,7 +1,9 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_app/bloc/map/map_bloc.dart';
+import 'package:maps_app/bloc/search_location/search_location_bloc.dart';
 import 'package:maps_app/bloc/user_location/user_location_bloc.dart';
 import 'package:maps_app/widgets/widtgets.dart';
 
@@ -25,39 +27,9 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    final mapBloc = BlocProvider.of<MapBloc>(context);
     final userLocationBloc = BlocProvider.of<UserLocationBloc>(context);
     return Scaffold(
-      floatingActionButton: BlocBuilder<MapBloc, MapState>(
-        builder: (context, state) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              CustomFloattingActionButton(
-                icon: state.enableFollowUser
-                    ? Icons.directions_off_rounded
-                    : Icons.directions_run,
-                onPressed: () {
-                  mapBloc.add(OnEnableFollowUser());
-                },
-              ),
-              CustomFloattingActionButton(
-                icon: Icons.moving_rounded,
-                onPressed: () {
-                  mapBloc.add(OnEnablePolyline());
-                },
-              ),
-              CustomFloattingActionButton(
-                icon: Icons.my_location,
-                onPressed: () {
-                  mapBloc
-                      .returnInitialLocation(userLocationBloc.state.location!);
-                },
-              ),
-            ],
-          );
-        },
-      ),
+      floatingActionButton: _customFloatingActionButton(userLocationBloc),
       body: Stack(
         children: [
           BlocBuilder<UserLocationBloc, UserLocationState>(
@@ -65,10 +37,66 @@ class _MapPageState extends State<MapPage> {
               return createMap(state);
             },
           ),
-          // Positioned(child: SearchBar(), top: 0,),
-          CustomMarker()
+          BlocBuilder<SearchLocationBloc, SearchLocationState>(
+            builder: (context, state) {
+              return Visibility(
+                  visible: !state.enableSelectLocation,
+                  child: Positioned(
+                    child: FadeInDown(child: SearchBar()),
+                    top: 0,
+                  ));
+            },
+          ),
+          BlocBuilder<SearchLocationBloc, SearchLocationState>(
+            builder: (context, state) {
+              return Visibility(
+                  visible: state.enableSelectLocation, child: CustomMarker());
+            },
+          ),
         ],
       ),
+    );
+  }
+
+  BlocBuilder<MapBloc, MapState> _customFloatingActionButton(
+      UserLocationBloc userLocationBloc) {
+    final mapBloc = BlocProvider.of<MapBloc>(context);
+    return BlocBuilder<MapBloc, MapState>(
+      builder: (context, state) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FadeInUp(
+              child: CustomFloattingActionButton(
+                icon: state.enableFollowUser
+                    ? Icons.directions_off_rounded
+                    : Icons.directions_run,
+                onPressed: () {
+                  mapBloc.add(OnEnableFollowUser());
+                },
+              ),
+            ),
+            FadeInUp(
+              delay: Duration(milliseconds: 300),
+              child: CustomFloattingActionButton(
+                icon: Icons.moving_rounded,
+                onPressed: () {
+                  mapBloc.add(OnEnablePolyline());
+                },
+              ),
+            ),
+            FadeInUp(
+              delay: Duration(milliseconds: 600),
+              child: CustomFloattingActionButton(
+                icon: Icons.my_location,
+                onPressed: () {
+                  mapBloc.returnInitialLocation(userLocationBloc.state.location!);
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

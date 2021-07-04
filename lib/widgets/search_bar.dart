@@ -20,7 +20,7 @@ class _SearchBarState extends State<SearchBar> {
               context: context,
               delegate: SearchLocation(),
             );
-            _handleSearchLocationResult(result!);
+            _handleSearchLocationResult(context, result!);
           },
           child: _input(),
         ),
@@ -84,9 +84,8 @@ class _SearchBarState extends State<SearchBar> {
           ),
           Visibility(
             visible: !this._showAnimation,
-            child: AnimatedOpacity(
-              opacity: this._showAnimation ? 0 : 1,
-              duration: Duration(seconds: 3),
+            child: FadeIn(
+              duration: Duration(seconds: 2),
               child: Text(
                 "a donde tu quieras!",
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -105,11 +104,14 @@ class _SearchBarState extends State<SearchBar> {
     );
   }
 
-  _handleSearchLocationResult(SearchLocationResult result) {
-    if (result.cancel) {
-      print("Cancelo");
+  _handleSearchLocationResult(
+      BuildContext context, SearchLocationResult result) {
+    final searchLocationBloc = BlocProvider.of<SearchLocationBloc>(context);
+    if (result.enableSelectLocation) {
+      searchLocationBloc.add(OnEnableSelectLocation());
       return;
     }
-    print("Manual");
+    searchLocationBloc.add(OnDisableSelectLocation());
+    return;
   }
 }

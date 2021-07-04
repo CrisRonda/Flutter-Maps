@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:maps_app/bloc/map/map_bloc.dart';
+import 'package:maps_app/bloc/search_location/search_location_bloc.dart';
 import 'package:maps_app/bloc/user_location/user_location_bloc.dart';
+
 import 'package:maps_app/pages/access_gps_page.dart';
 import 'package:maps_app/pages/loading_page.dart';
 import 'package:maps_app/pages/map_page.dart';
 import 'package:maps_app/pages/no_internet_page.dart';
-
+ 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -19,6 +22,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (_) => MapBloc(),
+          ),
+          BlocProvider(
+            create: (_) => SearchLocationBloc(),
           )
         ],
         child: MaterialApp(
