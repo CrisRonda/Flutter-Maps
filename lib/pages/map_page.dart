@@ -124,6 +124,7 @@ class _MapPageState extends State<MapPage> {
           zoomControlsEnabled: false,
           onMapCreated: mapBloc.initMap,
           polylines: state.polylines.values.toSet(),
+          markers: state.markers.values.toSet(),
           onCameraMove: (cameraPosition) =>
               mapBloc.add(OnMoveCamera(cameraPosition.target)),
         );
