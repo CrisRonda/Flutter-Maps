@@ -9,6 +9,8 @@ class _SearchBarState extends State<SearchBar> {
   bool _showAnimation = true;
   @override
   Widget build(BuildContext context) {
+    final centerLocation =
+        BlocProvider.of<UserLocationBloc>(context).state.location;
     final width = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Container(
@@ -18,7 +20,7 @@ class _SearchBarState extends State<SearchBar> {
           onTap: () async {
             final result = await showSearch(
               context: context,
-              delegate: SearchLocation(),
+              delegate: SearchLocation(centerLocation!),
             );
             _handleSearchLocationResult(context, result!);
           },
@@ -105,13 +107,30 @@ class _SearchBarState extends State<SearchBar> {
   }
 
   _handleSearchLocationResult(
-      BuildContext context, SearchLocationResult result) {
+      BuildContext context, SearchLocationResult result) async {
     final searchLocationBloc = BlocProvider.of<SearchLocationBloc>(context);
     if (result.enableSelectLocation) {
       searchLocationBloc.add(OnEnableSelectLocation());
       return;
     }
-    searchLocationBloc.add(OnDisableSelectLocation());
-    return;
+    if (result.manual) {
+      searchLocationBloc.add(OnDisableSelectLocation());
+      return;
+    }
+    final trafficService = TrafficService();
+    final mapBloc = BlocProvider.of<MapBloc>(context);
+    final initialPosition =
+        BlocProvider.of<UserLocationBloc>(context).state.location;
+    final destinationPosition = result.destination;
+    final drivingTraffic =
+        await trafficService.getRoute(initialPosition, destinationPosition);
+    final routeGeometry = drivingTraffic.routes[0].geometry;
+    final distance = drivingTraffic.routes[0].distance;
+    final duration = drivingTraffic.routes[0].duration;
+    // TODO: refactor
+    final points = decodeLatLngFromString(routeGeometry, 6);
+    final route = points.map((coord) => LatLng(coord[0], coord[1])).toList();
+    mapBloc.add(
+        OnDrawRoute(polyline: route, distance: distance, duration: duration));
   }
 }
