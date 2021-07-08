@@ -25,7 +25,12 @@ class OnDrawRoute extends MapEvent {
   final List<LatLng> polyline;
   final double distance;
   final double duration;
+  final String nameDestination;
 
-  OnDrawRoute(
-      {required this.polyline, required this.distance, required this.duration});
+  OnDrawRoute({
+    required this.polyline,
+    required this.distance,
+    required this.duration,
+    required this.nameDestination ,
+  });
 }

@@ -69,10 +69,10 @@ class CustomMarker extends StatelessWidget {
     final trafficService = TrafficService();
     final startLocation =
         BlocProvider.of<UserLocationBloc>(context).state.location;
-    final endLocation = mapBloc.state.positionCenterMap;
+    final endLocation = mapBloc.state.positionCenterMap!;
     final trafficResponse =
         await trafficService.getRoute(startLocation, endLocation);
-    if (trafficResponse == null) {
+    if (trafficResponse.routes.length == 0) {
       Navigator.pop(context);
       showAlert(
           context: context,
@@ -84,18 +84,24 @@ class CustomMarker extends StatelessWidget {
           ]);
       return;
     }
+    final reverseQueryDestination =
+        await trafficService.getNameByCoordsLocation(endLocation);
+
     final firstRoute = trafficResponse.routes[0];
     final distance = firstRoute.distance;
     final duration = firstRoute.duration;
-    final decodePoints =
-       decodeLatLngFromString(firstRoute.geometry, 6); //--> precision type polyline6
+    final nameDestinarion =
+        reverseQueryDestination.features[0].text ?? "Destino";
+    final decodePoints = decodeLatLngFromString(
+        firstRoute.geometry, 6); //--> precision type polyline6
     final List<LatLng> polyline =
         decodePoints.map((point) => new LatLng(point[0], point[1])).toList();
     mapBloc.add(OnDrawRoute(
-        polyline: polyline, distance: distance, duration: duration));
+        polyline: polyline,
+        distance: distance,
+        duration: duration,
+        nameDestination: nameDestinarion));
     Navigator.pop(context);
     searchLocationBloc.add(OnDisableSelectLocation());
   }
-
- 
 }

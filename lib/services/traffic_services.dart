@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_app/helpers/debouncer.dart';
 import 'package:maps_app/models/geocoding_response.dart';
+import 'package:maps_app/models/reverse_geocoding_response.dart';
 import 'package:maps_app/models/route_response.dart';
 
 class TrafficService {
@@ -30,7 +31,7 @@ class TrafficService {
       LatLng? startLocation, LatLng? endLocation) async {
     try {
       if (startLocation == null || endLocation == null) {
-        return RouteResponse(routes: [],code: '',uuid: '',waypoints: []);
+        return RouteResponse(routes: [], code: '', uuid: '', waypoints: []);
       }
       final coordsString =
           "${startLocation.longitude},${startLocation.latitude};${endLocation.longitude},${endLocation.latitude}";
@@ -46,7 +47,7 @@ class TrafficService {
 
       return data;
     } catch (e) {
-      return RouteResponse(routes: [],code: '',uuid: '',waypoints: []);
+      return RouteResponse(routes: [], code: '', uuid: '', waypoints: []);
     }
   }
 
@@ -65,6 +66,22 @@ class TrafficService {
       return result;
     } catch (e) {
       return GeocodingResponse();
+    }
+  }
+
+  Future<ReverseGeocodingResponse> getNameByCoordsLocation(
+      LatLng position) async {
+    try {
+      final url =
+          "${this._baseURLGeocoding}/${position.longitude},${position.latitude}.json";
+      final resp = await this._dio.get(url, queryParameters: {
+        "language": "es",
+        "access_token": this._accessToken,
+      });
+      final result = reverseGeocodingResponseFromJson(resp.data);
+      return result;
+    } catch (e) {
+      return ReverseGeocodingResponse();
     }
   }
 

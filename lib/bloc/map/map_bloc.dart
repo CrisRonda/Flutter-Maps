@@ -103,15 +103,27 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final currentPolylines = state.polylines;
     currentPolylines['routeToDestination'] = this._routeToDestination;
     final initialMarker = new Marker(
-        markerId: MarkerId("initialPosition"), position: event.polyline[0]);
+        markerId: MarkerId("initialMarker"),
+        position: event.polyline[0],
+        infoWindow: InfoWindow(
+          title: "Tu posicion",
+          snippet: "Duracion: ${(event.duration / 60).toStringAsFixed(1)} min",
+        ));
     final endMarker = new Marker(
-        markerId: MarkerId("endPosition"),
+        infoWindow: InfoWindow(
+            title: "${event.nameDestination}",
+            snippet:
+                "Distancia: ${(event.distance / 1000).toStringAsFixed(2)}km"),
+        markerId: MarkerId("endMarker"),
         position: event.polyline[event.polyline.length - 1]);
 
     final updatedMarkers = {...state.markers};
     updatedMarkers["initialMarker"] = initialMarker;
     updatedMarkers["endMarker"] = endMarker;
-
+    //hack --> Por defecto solo se abre un marcador 
+    Future.delayed(Duration(milliseconds: 321)).then((value) {
+      _mapController.showMarkerInfoWindow(MarkerId("endMarker"));
+    });
     yield state.copyWith(polyline: currentPolylines, markers: updatedMarkers);
   }
 }
