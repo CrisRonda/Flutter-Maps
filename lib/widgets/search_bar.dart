@@ -132,8 +132,11 @@ class _SearchBarState extends State<SearchBar> {
     // TODO: refactor
     final points = decodeLatLngFromString(routeGeometry, 6);
     final route = points.map((coord) => LatLng(coord[0], coord[1])).toList();
-    // mapBloc.add(
-    //     OnDrawRoute(polyline: route, distance: distance, duration: duration));
+    mapBloc.add(OnDrawRoute(
+        polyline: route,
+        distance: distance,
+        duration: duration,
+        nameDestination: result.nameDestination));
     //Add to history
     searchLocationBloc.add(OnAddRecentLocation(result));
   }

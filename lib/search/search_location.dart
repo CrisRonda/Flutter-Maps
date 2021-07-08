@@ -165,7 +165,7 @@ class SearchLocation extends SearchDelegate<SearchLocationResult> {
                     SearchLocationResult(
                         cancel: false,
                         description: location.text!,
-                        nameDestination: location.placeName!,
+                        nameDestination: location.text!,
                         destination: LatLng(position[1], position[0])));
               },
             );
