@@ -7,7 +7,9 @@ import 'package:maps_app/services/traffic_services.dart';
 class SearchLocation extends SearchDelegate<SearchLocationResult> {
   final TrafficService _trafficService;
   final LatLng centerLocation;
-  SearchLocation(this.centerLocation)
+  final List<SearchLocationResult> recentLocations;
+
+  SearchLocation(this.centerLocation, this.recentLocations)
       : this._trafficService = new TrafficService();
   @override
   String get searchFieldLabel => "Busca un lugar";
@@ -70,7 +72,33 @@ class SearchLocation extends SearchDelegate<SearchLocationResult> {
                   new SearchLocationResult(
                       enableSelectLocation: true, manual: true));
             },
-          )
+          ),
+          ...this
+              .recentLocations
+              .map((location) => ListTile(
+                    leading: Icon(
+                      Icons.history,
+                      color: Colors.white,
+                    ),
+                    title: Text(
+                      location.nameDestination,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    subtitle: Text(
+                      location.description,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {
+                      this.close(
+                          context,
+                          SearchLocationResult(
+                              cancel: false,
+                              description: location.description,
+                              nameDestination: location.nameDestination,
+                              destination: location.destination));
+                    },
+                  ))
+              .toList(),
         ],
       );
     }

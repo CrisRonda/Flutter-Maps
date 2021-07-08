@@ -11,6 +11,8 @@ class _SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     final centerLocation =
         BlocProvider.of<UserLocationBloc>(context).state.location;
+    final recentLocations =
+        BlocProvider.of<SearchLocationBloc>(context).state.recentLocations;
     final width = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Container(
@@ -20,7 +22,7 @@ class _SearchBarState extends State<SearchBar> {
           onTap: () async {
             final result = await showSearch(
               context: context,
-              delegate: SearchLocation(centerLocation!),
+              delegate: SearchLocation(centerLocation!, recentLocations),
             );
             _handleSearchLocationResult(context, result!);
           },
@@ -132,5 +134,7 @@ class _SearchBarState extends State<SearchBar> {
     final route = points.map((coord) => LatLng(coord[0], coord[1])).toList();
     mapBloc.add(
         OnDrawRoute(polyline: route, distance: distance, duration: duration));
+    //Add to history
+    searchLocationBloc.add(OnAddRecentLocation(result));
   }
 }
