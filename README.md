@@ -1,16 +1,53 @@
-# maps_app
+# Test Maps app with Flutter 🐦!
 
-A new Flutter project.
+This is a example using Google maps and Mapbox API
+You can:
 
-## Getting Started
+- Search a place
+- Select a place from map and get route
+- The app follows in real time
+- Has a customa painter example for market
 
-This project is a starting point for a Flutter application.
+# Concepts
 
-A few resources to get you started if this is your first Flutter project:
+- Bloc
+- Streams
+- Custom Painter
+- Google Maps
+- Mapbox
+- Connectivity App
+- Lottie
+- Basic Animations
+- Theme UI
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+# Screenshots
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Loading screen
+
+<img src="./screenshots/1.gif"
+     alt="IOS"
+     width="75%"/>
+
+## Follow user in real time
+
+<img src="./screenshots/5.gif"
+     alt="IOS"
+     width="75%"/>
+
+## Search places
+
+<img src="./screenshots/2.gif"
+     alt="IOS"
+     width="75%"/>
+
+## Select a place from map
+
+<img src="./screenshots/3.gif"
+     alt="IOS"
+     width="75%"/>
+
+## Draw route in map
+
+<img src="./screenshots/4.gif"
+     alt="IOS"
+     width="75%"/>
