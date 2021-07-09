@@ -129,7 +129,7 @@ class _SearchBarState extends State<SearchBar> {
     final routeGeometry = drivingTraffic.routes[0].geometry;
     final distance = drivingTraffic.routes[0].distance;
     final duration = drivingTraffic.routes[0].duration;
-    // TODO: refactor
+
     final points = decodeLatLngFromString(routeGeometry, 6);
     final route = points.map((coord) => LatLng(coord[0], coord[1])).toList();
     mapBloc.add(OnDrawRoute(

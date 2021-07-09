@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart' show Colors;
+import 'package:flutter/material.dart' show Colors, Offset;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:maps_app/helpers/helpers.dart';
 import 'package:maps_app/themes/map_style.dart';
 import 'package:meta/meta.dart';
 
@@ -102,28 +103,40 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         this._routeToDestination.copyWith(pointsParam: event.polyline);
     final currentPolylines = state.polylines;
     currentPolylines['routeToDestination'] = this._routeToDestination;
+
+    // final iconFromAssets = await getAssetImageMarker();
+    // final iconFromNetwork = await getNetworkImageMarker();
+    final iconFromWidget = await getCustomMarkerImageMarker(event.duration);
+    final iconFromDestinationWidget = await getCustomMarkerDestinationImageMarker(event.nameDestination,event.distance);
     final initialMarker = new Marker(
         markerId: MarkerId("initialMarker"),
         position: event.polyline[0],
+        icon: iconFromWidget,
+        anchor: Offset(0,1),
         infoWindow: InfoWindow(
           title: "Tu posicion",
           snippet: "Duracion: ${(event.duration / 60).toStringAsFixed(1)} min",
         ));
+
+
     final endMarker = new Marker(
+        markerId: MarkerId("endMarker"),
+        position: event.polyline[event.polyline.length - 1],
+        icon: iconFromDestinationWidget,
+        anchor: Offset(0,1),
         infoWindow: InfoWindow(
             title: "${event.nameDestination}",
             snippet:
                 "Distancia: ${(event.distance / 1000).toStringAsFixed(2)}km"),
-        markerId: MarkerId("endMarker"),
-        position: event.polyline[event.polyline.length - 1]);
+        );
 
     final updatedMarkers = {...state.markers};
     updatedMarkers["initialMarker"] = initialMarker;
     updatedMarkers["endMarker"] = endMarker;
-    //hack --> Por defecto solo se abre un marcador 
-    Future.delayed(Duration(milliseconds: 321)).then((value) {
-      _mapController.showMarkerInfoWindow(MarkerId("endMarker"));
-    });
+    //hack --> Por defecto solo se abre un marcador
+    // Future.delayed(Duration(milliseconds: 321)).then((value) {
+    //   _mapController.showMarkerInfoWindow(MarkerId("endMarker"));
+    // });
     yield state.copyWith(polyline: currentPolylines, markers: updatedMarkers);
   }
 }
